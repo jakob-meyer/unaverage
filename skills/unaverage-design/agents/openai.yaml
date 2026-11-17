@@ -1,0 +1,7 @@
+interface:
+  display_name: "unaverage design"
+  short_description: "Asks first, shows ranked mockups, aims for studio-level design"
+  default_prompt: "Use $unaverage-design to push this visual result toward studio level."
+
+policy:
+  allow_implicit_invocation: true

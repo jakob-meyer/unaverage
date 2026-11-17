@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deck shell</title>
+<!--
+  Deck shell: structure for an HTML deck, not a look. Fixed 1920 x 1080 slides (section.slide) that
+  render.mjs and pdf.mjs take one by one with --selector .slide. F or a double click presents.
+  Set lang to the deck's language (generic-check picks its word lists by lang; hyphens: auto, where long words
+  must break, needs it) and the title to the deck's name (browser tab, PDF title). On screen the slides fit the
+  window width (--deck-zoom), so a deck sent as a file or link needs no horizontal scrolling on a laptop; on a phone
+  a 16:9 deck needs larger type or a portrait version (references/craft.md 6). render.mjs, measure.mjs and
+  generic-check with --selector set --deck-zoom to 1, print and pdf.mjs ignore it: they all see 1920 x 1080.
+  The three slides and the demo rules are sample content from a fictional freight forwarder: replace both with
+  the deck's content and the direction's typefaces, colors and layout. Keep the slide box, the classes source
+  and label, the speaker notes, the data-step builds, the presentation script and the print rules. No external
+  resources: add fonts and images locally.
+-->
+<style>
+  /* Neutral tokens only; the direction replaces them. */
+  :root {
+    --ink: #111;
+    --paper: #fff;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --margin: 120px; /* outer margin of every slide */
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; color: var(--ink); font-family: var(--font); }
+
+  /* Slide box: fixed size, its own containing block, nothing spills out. Slide types are a second class
+     (here title, stage, compare); 3 to 7 types, repeated strictly. */
+  .slide { position: relative; width: 1920px; height: 1080px; overflow: hidden; padding: var(--margin); background: var(--paper); }
+
+  /* Small text carries the class source (third-party figures only; own figures need none) or label (labels,
+     page numbers, metadata), so checks and edits find it; generic-check H4 lets marked text in a talk deck go
+     down to 18 px. The base of a key figure (compared with what, over which period) is content, not a label.
+     Gates per deck type in references/use-cases/README.md 4.1; at 1080 px height talk deck content from 40 px,
+     reading deck body text 22 to 28 px. Starting size; the direction sets its own, from 18 px. */
+  .source, .label { font-size: 20px; line-height: 1.3; }
+
+  /* Speaker notes: aside.notes inside its slide (the talk text of a hybrid deck), never shown on the slide, in
+     screenshots, checks or the PDF. */
+  .notes { display: none; }
+
+  /* Demo rules for the three demo slides; replace them. */
+  h1, h2, p, dl, dd { margin: 0; }
+  h1, h2 { font-weight: 600; text-wrap: balance; }
+  .title { display: flex; flex-direction: column; justify-content: flex-end; gap: 40px; }
+  .title h1 { max-width: 1400px; font-size: 120px; line-height: 1.02; letter-spacing: -0.01em; }
+  .stage { display: flex; flex-direction: column; justify-content: center; gap: 48px; }
+  .stage h2 { font-size: 72px; line-height: 1; font-weight: 500; }
+  .stage .figure { display: block; font-size: 320px; line-height: 0.9; font-weight: 600; letter-spacing: -0.02em; }
+  .context { font-size: 40px; line-height: 1.3; }
+  .compare h2 { max-width: 1400px; font-size: 72px; line-height: 1.1; }
+  .bars { display: grid; gap: 48px; margin: 120px 0 80px; }
+  .bars div { display: grid; grid-template-columns: 480px 1fr; align-items: center; }
+  .bars dt, .bars dd { font-size: 48px; }
+  .bars dd { display: flex; align-items: center; gap: 24px; font-variant-numeric: tabular-nums; }
+  .bar { width: calc(var(--share) * 1000px); height: 56px; background: var(--ink); }
+  .folio { position: absolute; right: var(--margin); bottom: 64px; }
+
+  /* Screen: the slides one below the other, fitted to the window width (--deck-zoom, set by the script); presentation
+     mode shows one slide fitted to the window.
+     Builds: an element with data-step appears with one forward step, in document order (wrap what appears
+     together; steps follow the speaking order, one item per step, top to bottom). Only presentation mode hides steps; the scroll view, render.mjs, print and pdf.mjs show the end
+     state of every slide. */
+  @media screen {
+    body { background: var(--ink); }
+    .slide { margin: 0 auto; }
+    .slide + .slide { margin-top: 40px; }
+    html:not([data-present]) .slide { zoom: var(--deck-zoom, 1); }
+    html[data-present], html[data-present] body { height: 100%; overflow: hidden; }
+    html[data-present] .slide { position: fixed; left: 50%; top: 50%; margin: 0; transform: translate(-50%, -50%) scale(var(--fit, 1)); }
+    html[data-present] .slide:not([data-current]) { display: none; }
+    html[data-present] [data-step]:not([data-shown]) { visibility: hidden; }
+  }
+
+  /* Print and pdf.mjs without --selector: one slide per page at the slide size, no margins. */
+  @page { size: 1920px 1080px; margin: 0; }
+  @media print {
+    html, body { background: var(--paper); }
+    .slide { break-inside: avoid; }
+    .slide + .slide { break-before: page; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Demo slides from a fictional freight forwarder: replace them. -->
+<section class="slide title">
+  <h1>Customs holds set our delivery dates</h1>
+  <p class="label">Import desk review, July 2026</p>
+</section>
+
+<section class="slide stage">
+  <h2><span class="figure">41 h</span> per customs hold</h2>
+  <p class="context">median, filed on arrival, Q2 2026</p>
+  <p class="label folio">2</p>
+  <aside class="notes">Most holds are filed only once the truck is at the border.</aside>
+</section>
+
+<section class="slide compare">
+  <h2>Filing before arrival cuts the wait to 9 hours</h2>
+  <dl class="bars">
+    <div data-step><dt>filed before arrival</dt><dd><span class="bar" style="--share: 0.22"></span><span>9 h</span></dd></div>
+    <div data-step><dt>filed on arrival</dt><dd><span class="bar" style="--share: 1"></span><span>41 h</span></dd></div>
+  </dl>
+  <p class="context">median per group, 312 holds, Q2 2026</p>
+  <p class="label folio">3</p>
+</section>
+
+<script>
+  // Presentation mode: F or a double click toggles a full-screen presentation with one slide fitted to the window.
+  // Arrow keys, space, Enter, PageUp and PageDown step, Home and End jump; a click on the right three quarters goes
+  // forward, on the left quarter back; Esc leaves. ?present in the URL starts it without full screen. Typing in a form
+  // field or editable text, clicks on controls, Enter on a focused link or button and space on a focused button keep
+  // their own meaning.
+  // A forward step first shows the next data-step element of the slide, then goes to the next slide (from its start);
+  // a step back hides the last shown element, then goes to the previous slide in its end state. End shows the end state.
+  (() => {
+    const root = document.documentElement;
+    const slides = [...document.querySelectorAll('.slide')];
+    if (!slides.length) return;
+    const steps = slides.map(s => [...s.querySelectorAll('[data-step]')]);
+    const NEXT = ['ArrowRight', 'ArrowDown', ' ', 'Enter', 'PageDown'], PREV = ['ArrowLeft', 'ArrowUp', 'PageUp'];
+    const EDITABLE = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])';
+    const CONTROLS = `a, button, summary, label, ${EDITABLE}`;
+    let current = 0, shown = 0, clickTimer = 0, before = null, refused = false, keep = null;
+    const presenting = () => root.hasAttribute('data-present');
+    const fullscreen = () => document.fullscreenElement || document.webkitFullscreenElement;
+    const fit = () => root.style.setProperty('--fit', Math.min(innerWidth / 1920, innerHeight / 1080));
+    const zoom = () => root.style.setProperty('--deck-zoom', Math.min(1, root.clientWidth / 1920));
+    // the element the event started on, also inside a shadow root
+    const origin = e => { const t = e.composedPath()[0]; return t instanceof Element ? t : null; };
+
+    // slide n with its first k steps shown (k = Infinity: all, the end state)
+    function show(n, k = 0) {
+      current = Math.max(0, Math.min(slides.length - 1, n));
+      shown = Math.max(0, Math.min(steps[current].length, k));
+      slides.forEach((s, i) => s.toggleAttribute('data-current', i === current));
+      steps[current].forEach((e, i) => e.toggleAttribute('data-shown', i < shown));
+    }
+    function forward() {
+      if (shown < steps[current].length) show(current, shown + 1);
+      else if (current < slides.length - 1) show(current + 1, 0);
+    }
+    function back() {
+      if (shown > 0) show(current, shown - 1);
+      else if (current > 0) show(current - 1, Infinity);
+    }
+    // the slide at the top edge of the window (else the nearest) and how far it is scrolled, as a share of its height
+    function atTop() {
+      const rs = slides.map(s => s.getBoundingClientRect());
+      let i = rs.findIndex(r => r.top <= 0 && r.bottom > 0);
+      if (i < 0) i = rs.reduce((b, r, j) => (Math.abs(r.top) < Math.abs(rs[b].top) ? j : b), 0);
+      return { i, f: Math.max(0, -rs[i].top / rs[i].height) };
+    }
+    // a new zoom (resize, rotation, leaving full screen) keeps the slide in view where it was
+    function rezoom() {
+      if (presenting()) return zoom();
+      const { i, f } = keep !== null ? { i: keep, f: 0 } : atTop();
+      keep = null;
+      zoom();
+      const r = slides[i].getBoundingClientRect();
+      scrollTo({ top: scrollY + r.top + f * r.height, behavior: 'instant' });
+    }
+    function start() {
+      if (presenting()) return;
+      show(atTop().i);
+      fit();
+      root.setAttribute('data-present', '');
+    }
+    function stop() {
+      if (!presenting()) return;
+      root.removeAttribute('data-present');
+      slides.forEach(s => s.removeAttribute('data-current'));
+      document.querySelectorAll('[data-shown]').forEach(e => e.removeAttribute('data-shown'));
+      slides[current].scrollIntoView({ block: 'start', behavior: 'instant' });
+      if (fullscreen()) {
+        // the window shrinks after full screen: the resize keeps this slide at the top
+        keep = current; setTimeout(() => { keep = null; }, 1500);
+        Promise.resolve((document.exitFullscreen || document.webkitExitFullscreen).call(document)).catch(() => {});
+      }
+    }
+    // presenting in full screen, or after full screen was refused: leave; otherwise present and ask for full screen
+    // (refused, it stays in the window)
+    function toggle() {
+      if (presenting() && (fullscreen() || refused)) return stop();
+      start();
+      const request = root.requestFullscreen || root.webkitRequestFullscreen;
+      refused = !request;
+      if (request && !fullscreen()) Promise.resolve(request.call(root)).catch(() => { refused = true; });
+    }
+
+    addEventListener('keydown', e => {
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      const t = origin(e);
+      if (t && (t.closest(EDITABLE) || (e.key === 'Enter' && t.closest('a, button, summary')) || (e.key === ' ' && t.closest('button, summary')))) return;
+      before = null;
+      if (e.key === 'f' || e.key === 'F') toggle();
+      else if (!presenting()) return;
+      else if (NEXT.includes(e.key)) forward();
+      else if (PREV.includes(e.key)) back();
+      else if (e.key === 'Home') show(0);
+      else if (e.key === 'End') show(slides.length - 1, Infinity);
+      else if (e.key === 'Escape') stop();
+      else return;
+      e.preventDefault();
+    });
+    // back in the deck after a link or button opened something: Enter and space step again
+    addEventListener('focus', () => { const a = document.activeElement; if (presenting() && a && a !== document.body && !a.closest(EDITABLE)) a.blur(); });
+    // a click waits for a possible second click, so a double click toggles without stepping first; a slower double
+    // click (the system allows up to about 500 ms) undoes the step of its first click
+    addEventListener('click', e => {
+      const t = origin(e);
+      if (!presenting() || e.button !== 0 || (t && t.closest(CONTROLS))) { before = null; return; }
+      clearTimeout(clickTimer);
+      if (e.detail > 1) return;
+      before = { n: current, k: shown, at: e.timeStamp };
+      clickTimer = setTimeout(e.clientX < innerWidth / 4 ? back : forward, 250);
+    });
+    addEventListener('dblclick', e => {
+      const t = origin(e);
+      clearTimeout(clickTimer);
+      const undo = before && e.timeStamp - before.at < 800 ? before : null;
+      before = null;
+      if (t && t.closest(CONTROLS)) return;
+      if (presenting() && undo) show(undo.n, undo.k);
+      e.preventDefault();
+      toggle();
+    });
+    // Esc in full screen ends full screen in the browser, which ends the presentation as well
+    for (const type of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(type, () => { if (!fullscreen()) stop(); });
+    addEventListener('resize', () => { rezoom(); if (presenting()) fit(); });
+    zoom();
+    if (new URLSearchParams(location.search).has('present')) start();
+  })();
+</script>
+</body>
+</html>

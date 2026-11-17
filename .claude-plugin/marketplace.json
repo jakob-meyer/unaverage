@@ -1,0 +1,26 @@
+{
+  "name": "unaverage",
+  "owner": {
+    "name": "Jakob Meyer",
+    "url": "https://github.com/jakob-meyer"
+  },
+  "metadata": {
+    "description": "Agent skills for Claude, Claude Code and Codex under the brand unaverage. First skill: unaverage-design, which aims for studio-level design instead of the generic AI look."
+  },
+  "plugins": [
+    {
+      "name": "unaverage-design",
+      "description": "Design skill for anything visual that aims for studio-level results. When the direction is open it first asks about things from your world, then shows ranked directions as mockups, measures the result and has AI reviewers check it with fresh context. Written in English, with market modules for German copy and for EU and DACH law.",
+      "source": "./skills/unaverage-design",
+      "author": {
+        "name": "Jakob Meyer",
+        "url": "https://github.com/jakob-meyer"
+      },
+      "homepage": "https://github.com/jakob-meyer/unaverage",
+      "repository": "https://github.com/jakob-meyer/unaverage",
+      "license": "Apache-2.0",
+      "keywords": ["design", "web-design", "ui", "presentation", "pitch-deck", "social-media", "branding", "ai-slop", "german", "no-ai-look"],
+      "category": "design"
+    }
+  ]
+}

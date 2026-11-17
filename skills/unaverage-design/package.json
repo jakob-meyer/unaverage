@@ -1,0 +1,12 @@
+{
+  "name": "unaverage-design",
+  "private": true,
+  "type": "module",
+  "description": "Render, measurement and generic-check tools for the unaverage-design skill",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "dependencies": {
+    "puppeteer-core": "^25.0.0"
+  }
+}

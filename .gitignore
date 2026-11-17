@@ -1,0 +1,21 @@
+# Dependencies (the skill installs puppeteer-core locally with npm install)
+node_modules
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Release archives (attached to GitHub releases, not committed)
+dist/
+*.zip
+
+# Python caches from the image scripts
+__pycache__/
+*.pyc
+
+# Local secrets never belong in the repository
+.env
+.env.*

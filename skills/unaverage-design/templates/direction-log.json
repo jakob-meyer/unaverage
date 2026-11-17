@@ -1,0 +1,125 @@
+{
+  "_format": "unaverage-design direction-log, version 2",
+  "_note": "One entry per wrap-up (stage 7), newest last, only in entries. Storage: design-log.json in the project folder and, if writable, ~/.unaverage/direction-log.json with the entries of all brands. Read in stage 0: entries of the same brand with a direction the user chose set consistency (continue direction, fonts, palette, signature element). The last three entries of other brands steer rotation: their chosen directions lose ties, their display fonts are swapped for an equally fitting pairing. Signature element and prop rotate the same way: what carried for these three brands loses ties. _example is fictional (Weserbogen from directions/README.md 11.7), shows only the format and never counts for consistency or rotation.",
+  "_fields": {
+    "date": "wrap-up date, YYYY-MM-DD",
+    "brand": "brand name, same spelling in all entries; key for consistency and rotation",
+    "project": "short name of the job",
+    "use_case": "case ID from use-cases/README.md, with the addition where the case matrix has several rows (for example B1 B2B industry)",
+    "register": "Operate, Persuade, Read, Feed or Distance",
+    "level": "Quick, Standard or Studio",
+    "mode": "null, Correction, Review only, Autonomous or No user available",
+    "r0": "category default and own asset (null if none)",
+    "set": "the three shown or computed directions with class and score S",
+    "seed": "value, pool in order, hit index; null if not drawn",
+    "chosen": "chosen direction: code, name, candidate, accent, dose, whether the recommendation was followed",
+    "discarded": "directions not chosen, with the reason in the user's words",
+    "fonts": "live families with role and weights",
+    "palette": "colors with hex and role, plus the saturation strategy A, B or C",
+    "signature_element": "one sentence; name a carrying prop here too (for example stamp or highlighter fill)",
+    "generic_index": "index after triage in the delivered result",
+    "folder": "path to the result, relative to the project folder",
+    "note": "deviations, user wishes for the next work on this brand"
+  },
+  "_example": {
+    "date": "2026-10-08",
+    "brand": "Weserbogen",
+    "project": "appointment booking website",
+    "use_case": "B2 B2C health",
+    "register": "Persuade",
+    "level": "Standard",
+    "mode": null,
+    "r0": {
+      "code": "WRM",
+      "own_asset": null
+    },
+    "set": [
+      {
+        "code": "EDI",
+        "name": "Weser view",
+        "class": "edge",
+        "score": 78.3
+      },
+      {
+        "code": "ORD",
+        "name": "Clear sequence",
+        "class": "edge, moved up for the empty class bold",
+        "score": 76.7
+      },
+      {
+        "code": "DRW",
+        "name": "Tides",
+        "class": "near",
+        "score": 65.0
+      }
+    ],
+    "seed": {
+      "value": 483920,
+      "pool": [],
+      "hit": null
+    },
+    "chosen": {
+      "code": "EDI",
+      "name": "Weser view",
+      "candidate": "full-bleed room photos with a view of the Weser, the chapter word in the image",
+      "accent": null,
+      "dose": "quiet",
+      "recommendation_followed": true
+    },
+    "discarded": [
+      {
+        "code": "ORD",
+        "name": "Clear sequence",
+        "reason": "feels too much like a clinic to us, but the treatment steps should stay as a section"
+      },
+      {
+        "code": "DRW",
+        "name": "Tides",
+        "reason": "drawings instead of our rooms, too playful"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Noto Serif Display",
+        "role": "title and chapter word, italic as a second voice",
+        "weights": [
+          300,
+          400
+        ]
+      },
+      {
+        "family": "Libre Franklin",
+        "role": "text, appointments, controls",
+        "weights": [
+          400
+        ]
+      }
+    ],
+    "palette": {
+      "saturation_strategy": "B",
+      "colors": [
+        {
+          "hex": "#FFFFFF",
+          "role": "ground"
+        },
+        {
+          "hex": "#141414",
+          "role": "text"
+        },
+        {
+          "hex": "#5C5C5C",
+          "role": "caption, secondary text"
+        },
+        {
+          "hex": "#2E5E6E",
+          "role": "ink from the Weser photo: chapter mark and Book an appointment, under 3% of the area"
+        }
+      ]
+    },
+    "signature_element": "The hand signal \"raise your hand to pause\" opens every chapter as a small line mark before the chapter word in the image.",
+    "generic_index": 0,
+    "folder": "output/",
+    "note": "Example entry, fictional. Generic index 0, tell A4 intentional (not counted). Seed 483920 hit TYP at prompt level (pool TYP, MAX); after the answers no bold direction was above the threshold, ORD moved up. Team photos with consent requested, then check WRM again."
+  },
+  "entries": []
+}
