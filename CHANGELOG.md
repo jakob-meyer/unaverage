@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 The detailed history of the skill is in [skills/unaverage-design/CHANGELOG.md](skills/unaverage-design/CHANGELOG.md).
 
+## [Unreleased]
+
+Installation straight from GitHub was tested on 18 November 2026, after the repository went public, on macOS, in fresh configurations and without signing in: the `skills` CLI 1.8.1 found exactly this skill and installed it for Claude Code and Codex; Claude Code 2.1.325 added the marketplace, installed the plugin and installed `puppeteer-core` by itself; Codex 0.163.0 listed the skill that the CLI had installed; the release ZIP downloaded from GitHub matched the SHA-256 GitHub lists for it and unpacked to the same files as the skill folder in the repository.
+
+### Changed
+
+- README in English and German: the sentences on social posts, carousels and brand work now say "never measured with 3.4 in a scored round", as `docs/testing.md` does, and "Test results" now also summarizes the blind pair test on the AI look (`docs/testing.md`, section 2.14).
+
 ## [3.4.3] - 2026-11-18
 
 First public release, with the skill at version 3.4.3. The English versions 3.0 to 3.4 were built and tested before this release; their changes are in [skills/unaverage-design/CHANGELOG.md](skills/unaverage-design/CHANGELOG.md). The test results of round 3.4 apply to 3.4.0. Version 3.4.1 was checked at its first message only, in probes without builds, 3.4.2 was read against the rules, and 3.4.3 was checked on two result pages in Safari's engine. The effect of all three on builds is unmeasured.
@@ -46,4 +54,5 @@ These versions were built and tested internally in German and were not published
 
 - First version: a five-step process, eight craft levers, image sourcing, a quick check and hand-drawn-style accents.
 
+[Unreleased]: https://github.com/jakob-meyer/unaverage/compare/unaverage-design-v3.4.3...HEAD
 [3.4.3]: https://github.com/jakob-meyer/unaverage/releases/tag/unaverage-design-v3.4.3
