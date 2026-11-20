@@ -25,8 +25,10 @@
 // Clusters: Cream look, Neon dark, Broadsheet, Card kit, Stock hero, Glass look, Template display
 // (only with a display typeface from L1 or L2), Template stack (list or default typeface carries the text
 // plus 10 or more Lucide icons). New tells compared with v1: C14, D11, P4, F4, F6.
-// Bot-protection, sign-in and error pages and pages under 30 words are flagged in the report
-// (blocked, thin); their index is not meaningful.
+// Bot-protection, sign-in and error pages and too little text are flagged in the report (blocked, thin):
+// a whole page under 30 DOM words for web, ui and document, without any DOM word for social and slide; with --selector
+// each surface without any DOM word (a raster image or canvas; thin on the surface, thinSurfaces in the report), and a
+// selector that matches no measurable surface. Their index is not meaningful.
 // Word lists by language (E1, E3, E6, constant WORDS): a text node uses the list of its nearest lang attribute
 // (the document language included); text without lang or in a language without its own list uses all lists.
 // The skill's own markers [REQUIRED: ...] and [open: ...] and their German forms count on every page.
@@ -74,6 +76,11 @@ for (let i = 1; i < args.length; i++) {
 }
 if (!medium) medium = selector ? 'slide' : 'web';
 if (!MEDIA.includes(medium)) { console.error(`Unknown medium "${medium}" (use ${MEDIA.join(', ')}).\n${USAGE}`); process.exit(1); }
+// Too little text for a meaningful index. A post, slide, poster or card may carry 12 words or fewer (tell E1), so a
+// surface (--selector) and a whole post or slide count only without any DOM word: a raster image or canvas. A whole
+// web page, screen or document under 30 words is a loading page, a canvas page or an error.
+const THIN_PAGE = medium === 'social' || medium === 'slide' ? 1 : 30;
+const THIN_SURFACE = 1;
 const CHROME = findChrome();
 
 // Lists, as of October 2026. Review every six months (Anthropic frontend-design, Impeccable, own tests).
@@ -187,7 +194,8 @@ function analyze(scope, cfg) {
   }
   const totalChars = texts.reduce((s, x) => s + x.chars, 0) || 1;
   const allText = texts.map(x => x.t).join(' ');
-  const totalWords = texts.reduce((s, x) => s + x.words, 0) || 1;
+  const wordCount = texts.reduce((s, x) => s + x.words, 0);
+  const totalWords = wordCount || 1;
   const bySize = {}; texts.forEach(x => { const k = Math.round(x.size); bySize[k] = (bySize[k] || 0) + x.chars; });
   const body = +Object.entries(bySize).sort((a, b) => b[1] - a[1])[0]?.[0] || 16;
   const largest = texts.reduce((m, x) => x.size > (m?.size || 0) ? x : m, null);
@@ -616,7 +624,7 @@ function analyze(scope, cfg) {
   const mainBg = (() => { let best = null, area = 0; for (const x of info) { const c = rgb(x.cs.backgroundColor); if (c && c.a > 0.9 && x.r.width * x.r.height > area) { area = x.r.width * x.r.height; best = hex(c); } } return best || hex(pageBg); })();
   const vector = [cfg.foldImage === 0 ? 0 : cfg.foldImage < 0.25 ? 1 : 2, centered >= 0.6 ? 2 : centered >= 0.3 ? 1 : 0, Math.min(cards.length, 3), mainBg].join('|');
   const flags = { neon: false, dispLh, dispW, ratio, dispListed, serifDisplayL2: !!serifDisplay && L2.includes(dispFam) && !allowFonts.includes(dispFam), warmAccent, blurs, listShare: shareL1 + shareL2, stackShare: shareL1 + shareL2 + shareDefault, lucide };
-  return { tells: S, flags, vector, mainBg, pageBg: hex(pageBg), display: dispFam, body, largest: largest ? Math.round(largest.size) : null, sizes: Object.keys(bySize).map(Number), words: totalWords, lang: langShare, chars: texts.reduce((s, x) => s + x.chars, 0) };
+  return { tells: S, flags, vector, mainBg, pageBg: hex(pageBg), display: dispFam, body, largest: largest ? Math.round(largest.size) : null, sizes: Object.keys(bySize).map(Number), words: wordCount, lang: langShare, chars: texts.reduce((s, x) => s + x.chars, 0) };
 }
 
 async function imageShare(page, scope) {
@@ -717,7 +725,9 @@ const langText = l => Object.entries(l || {}).map(([k, v]) => `${k} ${v}`).join(
 function toMarkdown(report) {
   const lines = [`# Generic check`, '', `Input: ${report.input}  `, `Medium: ${report.medium}${report.deck ? ', deck ' + report.deck : ''}  `, `Languages (share of text): ${langText(report.lang)}`, ''];
   if (report.blocked) lines.push('**Warning: the page showed a bot-protection, sign-in or error page. The values do not apply to the design; check locally or with another source.**', '');
-  else if (report.thin) lines.push(`**Warning: only ${report.words} words in the DOM (WebGL, canvas, loading page or error). The index is not meaningful; check visually on the rendering.**`, '');
+  else if (report.noSurfaces) lines.push('**Warning: the selector matched no measurable surface. The index is not meaningful; check the selector and the page.**', '');
+  else if (report.thin) lines.push(`**Warning: ${report.surfaces ? 'no surface has a word' : `only ${report.words} words`} in the DOM (WebGL, canvas, raster image, loading page or error). The index is not meaningful; check visually on the rendering.**`, '');
+  else if (report.thinSurfaces) lines.push(`**Warning: surface(s) ${report.thinSurfaces.join(', ')} without any word in the DOM (raster image or canvas). Their values are not meaningful; check them visually on the rendering.**`, '');
   if (report.pixelCheck === 'not run') lines.push(`**Pixel check not run: ${report.pixelCheckReason}. Tells B2, B4, B5, B7 and D11 are unmeasured: check them on the image and never count them as clean. Install: SKILL.md, Missing tools never fail silently.**`, '');
   const block = (title, r) => {
     const s = r.summary;
@@ -726,7 +736,7 @@ function toMarkdown(report) {
     lines.push('');
   };
   if (report.surfaces) {
-    report.surfaces.forEach((r, i) => block(`Surface ${i + 1}`, r));
+    report.surfaces.forEach(r => block(`Surface ${r.surface}${r.thin ? ' (no word in the DOM, values not meaningful)' : ''}`, r));
     lines.push('## Sequence', '', ...report.sequence.map(s => `- ${s.id} ${s.name}: ${s.value}, **${s.status}**${s.note ? ' (' + s.note + ')' : ''}`), '', `**Total: index ${report.total.index}, ${verdictText(report.total.verdict)}** (median index of the surfaces ${report.total.medianIndex}, highest ${report.total.maxIndex}, sequence tells red: ${report.total.sequenceReds}).`);
   } else block('Result', report);
   lines.push('', 'Note: the index measures known patterns, not originality. Idea, image quality, coherence and motion are checked only by looking. Every tell is allowed when brief or brand ask for it (--allow-fonts, --brand-colors, --intentional); then name it as intentional in the wrap-up. Craft (H) is a separate gate and does not count in the index.');
@@ -795,6 +805,7 @@ async function main() {
         const png = path.join(tmpDir, `f${i}.png`);
         let pc; try { await el.screenshot({ path: png }); pc = pixelCheck(png); } catch (e) { pc = { px: null, reason: `screenshot failed (${e.message})` }; }
         res.surface = i + 1;
+        res.thin = res.words < THIN_SURFACE;
         pixelTells(res, pc.px, medium, foldImage);
         res.pixelCheck = pc.px ? 'ok' : 'not run'; if (!pc.px) res.pixelCheckReason = pc.reason;
         applyIntentional(res.tells, intentional);
@@ -802,6 +813,11 @@ async function main() {
         surfaces.push(res);
       }
       if (skipped.length) console.error(`Warning: surface(s) ${skipped.join(', ')} of ${count} for ${selector} are hidden or empty (display none or no height), skipped; the report numbers each measured surface in "surface".`);
+      const thinSurfaces = surfaces.filter(s => s.thin).map(s => s.surface);
+      const noSurfaces = surfaces.length === 0;
+      const allThin = noSurfaces || thinSurfaces.length === surfaces.length;
+      if (noSurfaces) console.error(`Warning: ${selector} matched no measurable surface (${count} found). Index not meaningful; check the selector and the page.`);
+      else if (thinSurfaces.length) console.error(`Warning: ${allThin ? 'all surfaces' : `surface(s) ${thinSurfaces.join(', ')} of ${count}`} without any word in the DOM (raster image or canvas). ${allThin ? 'Index' : 'Their values are'} not meaningful; check visually.`);
       // Sequence tells
       let pairs = 0, run = 1, maxRun = 1;
       for (let i = 1; i < surfaces.length; i++) { if (surfaces[i].vector === surfaces[i - 1].vector) { pairs++; run++; maxRun = Math.max(maxRun, run); } else run = 1; }
@@ -826,7 +842,7 @@ async function main() {
       for (const s of surfaces) { for (const [k, v] of Object.entries(s.lang)) langSum[k] = (langSum[k] || 0) + v * s.chars; charSum += s.chars; }
       const lang = Object.fromEntries(Object.entries(langSum).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, +(v / (charSum || 1)).toFixed(3)]));
       const notRun = surfaces.find(s => s.pixelCheck === 'not run');
-      report = { tool: 'generic-check', catalog: 'v2', input, medium, deck, blocked, ...(skipped.length ? { skipped } : {}), lang, pixelCheck: notRun ? 'not run' : 'ok', ...(notRun ? { pixelCheckReason: notRun.pixelCheckReason } : {}), surfaces, sequence, total: { medianIndex, maxIndex: idx[idx.length - 1] || 0, sequenceReds, index: tot, verdict: tot <= 1 ? 'clean' : tot === 2 ? 'borderline' : 'generic' } };
+      report = { tool: 'generic-check', catalog: 'v2', input, medium, deck, blocked, words: surfaces.reduce((a, s) => a + s.words, 0), thin: allThin, ...(noSurfaces ? { noSurfaces } : {}), ...(thinSurfaces.length ? { thinSurfaces } : {}), ...(skipped.length ? { skipped } : {}), lang, pixelCheck: notRun ? 'not run' : 'ok', ...(notRun ? { pixelCheckReason: notRun.pixelCheckReason } : {}), surfaces, sequence, total: { medianIndex, maxIndex: idx[idx.length - 1] || 0, sequenceReds, index: tot, verdict: tot <= 1 ? 'clean' : tot === 2 ? 'borderline' : 'generic' } };
     } else {
       const foldImage = await imageShare(page, null);
       const res = await page.evaluate(analyze, null, { ...cfgBase, foldImage });
@@ -836,7 +852,7 @@ async function main() {
       res.pixelCheck = pc.px ? 'ok' : 'not run'; if (!pc.px) res.pixelCheckReason = pc.reason;
       applyIntentional(res.tells, intentional);
       res.summary = summarize(res.tells, clusters(res.tells, res.flags), medium);
-      report = { tool: 'generic-check', catalog: 'v2', input, medium, blocked, thin: res.words < 30, ...res };
+      report = { tool: 'generic-check', catalog: 'v2', input, medium, blocked, thin: res.words < THIN_PAGE, ...res };
       if (report.thin) console.error(`Warning: only ${res.words} words in the DOM (WebGL, canvas, loading page or error). Index not meaningful; check visually.`);
     }
     if (report.pixelCheck === 'not run') console.error(`Warning: pixel check not run (${report.pixelCheckReason}); tells B2, B4, B5, B7 and D11 unmeasured.`);

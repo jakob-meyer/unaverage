@@ -299,7 +299,7 @@ Every red measured value is confirmed on the image before it triggers a change; 
 | 13 | transparent backgrounds distort contrast | `lowContrastTextNodes`, tell H5 | measure at the pixel |
 | 14 | UI mockup in web mode: product text counted as text load, window not as image | tells D7, D8 | the tool excludes detected mockups, otherwise visual value |
 | 15 | fluctuation of 1 between runs (glass areas, lazy-loaded icons) | index around 2 | second run, the image decides |
-| 16 | block, sign-in or error page, or under 30 words | whole report (`blocked`, `thin`) | the index does not apply; visual check |
+| 16 | block, sign-in or error page, or too little text (a whole web page, screen or document under 30 words; a post, slide or any surface with `--selector` without a word, a raster image or canvas), or a selector without a match | whole report (`blocked`, `thin`, `noSurfaces`); with several surfaces the surface (`thinSurfaces`) | the index or the values of that surface do not apply; visual check |
 | 17 | tabular figures (`tabular-nums`) of the house typeface look like a second or fallback font in numbers | reviewer finding "fallback font", "second typeface" | `typography.families` in `measure.mjs`: one family means a false finding; tabular figures stay |
 | 18 | not a false alarm: tell F1 when drawings do not count as images | tell F1 | look at the contact sheet: if title, anchor and emptiness stand in the same place on three surfaces in a row, F1 is real (rhythm following [craft.md](craft.md) 5.5); a measurement error only with visibly changing compositions |
 

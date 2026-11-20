@@ -8,10 +8,26 @@ The detailed history of the skill is in [skills/unaverage-design/CHANGELOG.md](s
 
 ## [Unreleased]
 
-Installation straight from GitHub was tested on 18 November 2026, after the repository went public, on macOS, in fresh configurations and without signing in: the `skills` CLI 1.8.1 found exactly this skill and installed it for Claude Code and Codex; Claude Code 2.1.325 added the marketplace, installed the plugin and installed `puppeteer-core` by itself; Codex 0.163.0 listed the skill that the CLI had installed; the release ZIP downloaded from GitHub matched the SHA-256 GitHub lists for it and unpacked to the same files as the skill folder in the repository.
+## [3.4.4] - 2026-11-20
+
+Fixes only, with the skill at 3.4.4: the lockfile, the findings of the Windows test of 16 November 2026, the skill's NOTICE and the README. Checked in pair runs of the scripts against 3.4.3, in fixtures, in a probe of five Quick runs on 20 November 2026 and in fresh installs on macOS; not measured in a blind test.
+
+Version 3.4.3: installation straight from GitHub was tested on 18 November 2026, after the repository went public, on macOS, in fresh configurations and without signing in: the `skills` CLI 1.8.1 found exactly this skill and installed it for Claude Code and Codex; Claude Code 2.1.325 added the marketplace, installed the plugin and installed `puppeteer-core` by itself; Codex 0.163.0 listed the skill that the CLI had installed; the release ZIP downloaded from GitHub matched the SHA-256 GitHub lists for it and unpacked to the same files as the skill folder in the repository.
+
+### Security
+
+- The lockfile pins `puppeteer-core` 25.17.0 instead of 25.12.0. Its `chromium-bidi` brings `zod` 4.6.7 instead of 3.25.76, which closes the three "high" reports of `npm audit` on `zod` (fixed in `zod` 4.6.6). The scripts use `puppeteer-core` only to drive the local browser.
+
+### Fixed
+
+- At Quick the skill asks about a missing tool before it builds: the tool's block is one of the two Quick questions, and the build waits for the answer. `npm install` is offered with the exact command and runs only after the user's OK.
+- Generic check: with `--selector` it now warns per surface when a surface has no word in the DOM, and when the selector matches nothing; a post, poster or slide with few words stays measurable, and an empty surface reports 0 words. No index changes.
+- At Quick the skill renders with its own `render.mjs`; the direction log follows the template's structure, and `~/.unaverage/` is created if it is missing; raster outputs are built as HTML or SVG and rendered, not drawn with Python.
 
 ### Changed
 
+- The skill's NOTICE says where the skill runs, and the brand line of the repository's NOTICE names Codex, ChatGPT and GPT, as the README does.
+- README in English and German: the sentence on the three `npm audit` reports is gone; the path for the Claude app names `unaverage-design-<version>.zip` and links the latest release; the limits now say "3.4.1 to 3.4.4"; the sentence on missing tools at Quick names the fix and its probe.
 - README in English and German: the sentences on social posts, carousels and brand work now say "never measured with 3.4 in a scored round", as `docs/testing.md` does, and "Test results" now also summarizes the blind pair test on the AI look (`docs/testing.md`, section 2.14).
 
 ## [3.4.3] - 2026-11-18
@@ -54,5 +70,6 @@ These versions were built and tested internally in German and were not published
 
 - First version: a five-step process, eight craft levers, image sourcing, a quick check and hand-drawn-style accents.
 
-[Unreleased]: https://github.com/jakob-meyer/unaverage/compare/unaverage-design-v3.4.3...HEAD
+[Unreleased]: https://github.com/jakob-meyer/unaverage/compare/unaverage-design-v3.4.4...HEAD
+[3.4.4]: https://github.com/jakob-meyer/unaverage/releases/tag/unaverage-design-v3.4.4
 [3.4.3]: https://github.com/jakob-meyer/unaverage/releases/tag/unaverage-design-v3.4.3

@@ -1,6 +1,6 @@
 # Origin and use
 
-unaverage-design is a design skill built and tested in Claude Code; Codex reads the same files, with no measured run there yet. Author: Jakob Meyer. Before its first public release it was called design-craft.
+unaverage-design is a design skill built and tested in Claude Code; it also runs in the Claude app and in Codex. Author: Jakob Meyer. Before its first public release it was called design-craft.
 
 ## Origin
 

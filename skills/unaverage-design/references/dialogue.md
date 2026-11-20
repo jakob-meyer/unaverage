@@ -8,7 +8,7 @@ As of 2026-10-10 (content of v2.4). Complements [SKILL.md](../SKILL.md) (stages 
 
 ## 1 Decision points and messages
 
-**DP1** effort and direction path (M0, M1, M1a, M1b, M1c; all levels, in Quick without a waiting point), **DP2** design contract (M2; Studio only), **DP3** direction mockups (M3; Standard, Studio, not with a given direction), **DP4** interim (M4; Studio only), **DP5** acceptance or change (M5, in Quick M5s, MC; all). Plus MA (asset request with product photos or screenshots and the facts of decision-critical sections, bundled into M0, M1, M1a, M1b or M1c; ask for gaps found during the build at once and bundled, keep working with a best-form stand-in) and M6 (stage 7).
+**DP1** effort and direction path (M0, M1, M1a, M1b, M1c; all levels, in Quick without a waiting point unless a tool is missing, 7.1), **DP2** design contract (M2; Studio only), **DP3** direction mockups (M3; Standard, Studio, not with a given direction), **DP4** interim (M4; Studio only), **DP5** acceptance or change (M5, in Quick M5s, MC; all). Plus MA (asset request with product photos or screenshots and the facts of decision-critical sections, bundled into M0, M1, M1a, M1b or M1c; ask for gaps found during the build at once and bundled, keep working with a best-form stand-in) and M6 (stage 7).
 
 **Silently before M1** (Standard, Studio): the world in short form (5 to 8 parts, [exploration.md](exploration.md) 2), R0 per [directions/README.md](directions/README.md) 11.4, the calculation at prompt level with marked assumptions (README 11.7), per direction one candidate with a tangible image idea for the name and "What you see". After the answers recompute; if the set or the recommendation changes, one sentence with the reason before the mockups (M3). **Before M1c and M1a** only the world in short form and R0; ranking, candidates and seed follow after the answers.
 
@@ -22,6 +22,8 @@ As of 2026-10-10 (content of v2.4). Complements [SKILL.md](../SKILL.md) (stages 
 > 1. **Your appointment card** as a scan or photo (at least 2,000 px on the long side). The notice shows it with the first Saturday appointment, because that is exactly the news. Until it arrives I rebuild it in the usual layout; then I put in the original.
 > 2. **Logo and house color** as a file or hex. Otherwise I set the name as a wordmark and derive the color from your world.
 > If you want directions to choose from, say "Standard".
+
+**With a missing tool** (7.1) its block is one of the two questions, and only then Quick waits for the answer before building. Then the asset request above shrinks to one question, and the block reads for example: "2. **One install, about a minute:** the measurement needs `puppeteer-core`, which is missing here. After your OK I run `npm install` in the skill folder (no browser download). Without it I render with this environment's tool and check by eye, and the wrap-up says so."
 
 Quick rule (README 11.5), short calculation over the starter set of case row I1 (R0 MAX): here ORD, because the effect Reassurance leads; group V (MAX, TYP, RAW) would not qualify as a recommendation in the risk category health anyway. The direction appears only in the wrap-up, with its derivation in two sentences, ranks 2 and 3 as one-liners. Assumptions in the wrap-up: the appointment card is the practice's own material; opening hours from the prompt; the PDF is RGB, the print shop converts.
 
@@ -96,7 +98,7 @@ The assumptions name concrete things on purpose: a wrong assumption draws out mo
 >
 > **What next?** Effort (without an answer: Standard). You then get three directions as mockups.
 
-**After the answers** as after M1c. If the prompt already named things, Q16 and Q17 drop out and M1 follows. **Quick** (signal word or triage): at most two questions, the goal first, no Q16 or Q17, no effort line, then start; without an answer question 1 keeps its default. **Nothing known** (no brand, product or format): first one question, what it is, for whom and in which format, without an effort offer; M1a follows the answer.
+**After the answers** as after M1c. If the prompt already named things, Q16 and Q17 drop out and M1 follows. **Quick** (signal word or triage): at most two questions, the goal first, no Q16 or Q17, no effort line, then start; without an answer question 1 keeps its default. If a tool is missing, its block (7.1) is one of the two questions and Quick waits for the answer. **Nothing known** (no brand, product or format): first one question, what it is, for whom and in which format, without an effort offer; M1a follows the answer.
 
 Goal only partly unclear: M1 or M1c by the check in stage 0, with a named assumption ("I assume this is about appointment bookings").
 
@@ -328,7 +330,7 @@ Operating modes: SKILL.md, Environment and tools. If the environment limits the 
 
 ### 7.1 Tool check (stage 0, silent, in the skill folder)
 
-**Missing tools never fail silently** ([SKILL.md](../SKILL.md), Environment and tools): the check stays silent only when everything is present. Otherwise the kickoff carries a short block (what is missing, what drops out or runs weaker, options: install after the user's OK, a named substitute, or continue and accept the loss), the user decides, and the wrap-up lists every check that did not run or ran as a substitute (M5). Nothing is installed without the user's OK. In the modes Autonomous and No user available (6.4, 6.5) nothing is installed at all: the run continues with the named substitute from the table below and lists it in the wrap-up under "Not run or substituted".
+**Missing tools never fail silently** ([SKILL.md](../SKILL.md), Environment and tools): the check stays silent only when everything is present. Otherwise the kickoff carries a short block (what is missing, what drops out or runs weaker, options: install after the user's OK, a named substitute, or continue and accept the loss), the user decides, and the wrap-up lists every check that did not run or ran as a substitute (M5). In Quick the block is one of the two questions, and only then Quick waits for the answer before building (M0). Nothing is installed without the user's OK. In the modes Autonomous and No user available (6.4, 6.5) nothing is installed at all: the run continues with the named substitute from the table below and lists it in the wrap-up under "Not run or substituted".
 
 ```bash
 node -e "const [a,b]=process.versions.node.split('.').map(Number);process.exit(a>22||(a===22&&b>=12)?0:1)" && echo node-ok

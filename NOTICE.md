@@ -38,4 +38,4 @@ The notes on law and accessibility in the skill, including its market modules, a
 
 ## Names of products and companies
 
-Claude and Claude Code are products of Anthropic, Codex is a product of OpenAI. Product, company and brand names are used only to describe compatibility or as evidence and belong to their respective owners. This project is independent and not affiliated with or endorsed by Anthropic or OpenAI.
+Claude and Claude Code are products of Anthropic; Codex, ChatGPT and GPT are products of OpenAI. Product, company and brand names are used only to describe compatibility or as evidence and belong to their respective owners. This project is independent and not affiliated with or endorsed by Anthropic or OpenAI.

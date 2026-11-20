@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.4.4, 2026-11-20
+
+Fixes from the Windows test of 16 November 2026 and from `npm audit`. Checked in pair runs of the scripts against 3.4.3, in fixtures and in a probe of five Quick runs on 20 November 2026 (Claude Code, not judged); not measured in a blind test.
+
+- **Lockfile** (`package.json`, `package-lock.json`): `puppeteer-core` 25.17.0 instead of 25.12.0. Its `chromium-bidi` brings `zod` 4.6.7 instead of 3.25.76, and `npm audit` reports no known vulnerability (before: three "high" reports, all on `zod`). On the same files the scripts render, export and measure exactly as before.
+- **Missing tools at Quick** (SKILL.md, stage 1, Quick step 3 and Environment and tools; `dialogue.md` 1, M0, M1a and 7.1): if a tool is missing, its block is one of the two Quick questions, and the build waits for the answer. Before, Quick had no waiting point: the build did not wait for the answer, and in the tests of 16 November the agents often named the tool only in the wrap-up or not at all.
+- **`npm install`** (SKILL.md, Environment and tools; `scripts/README.md`): offered with the exact command and run only after the user's OK, as the rule on missing tools already said.
+- **Rendering at Quick** (SKILL.md, Quick step 6): with `$S/render.mjs`; the environment's own tool only as a substitute.
+- **Direction log** (SKILL.md, stage 7): in the structure of the template (`_format`, entries in `entries`); the folder `~/.unaverage/` is created if it is missing, and the wrap-up says so.
+- **Raster outputs** (SKILL.md, stage 4, point 7): posts, ads and image files are built as HTML or SVG and rendered; Python edits images but never draws a layout.
+- **Too little text in the generic check** (`scripts/generic-check.mjs`, `generic-catalog.md` 2, `review.md` 18, `scripts/README.md`): with `--selector` the check now warns per surface (`thinSurfaces`) when a surface has no word in the DOM (a raster image or canvas), and when the selector matches no measurable surface (`noSurfaces`); a whole post or slide counts only without any word, a whole web page, screen or document under 30 words as before. A post, poster or slide with few words stays measurable. An empty surface reports 0 words instead of 1. No index changes.
+- **NOTICE**: says where the skill runs (Claude Code, the Claude app, Codex).
+
 ## 3.4.3, 2026-11-02
 
 Fixes for pages in Safari, found when the author opened a result there. The font fault was reproduced on two result pages in Safari's engine and is gone without the preload line. The blend fault comes from one screenshot. Not measured in a blind test.

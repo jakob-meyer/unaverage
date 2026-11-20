@@ -21,7 +21,7 @@ node $S/generic-check.mjs <file.html|url> --medium web|ui|slide|social|document 
 - **Classes:** 0 to 1 clean, 2 borderline with a visual check, from 3 generic.
 - **Gate:** index after triage at most 2 and no complete cluster; medium `ui` at most 1; a stricter value from direction or register applies.
 - **Sequences:** total index = median of the surfaces plus red sequence tells.
-- **Invalid:** `blocked` (block, sign-in or error page), `thin` (under 30 words).
+- **Invalid:** `blocked` (block, sign-in or error page), `thin` (too little text in the DOM: a whole web page, screen or document under 30 words; a whole post or slide, and with `--selector` every surface, without any word, since a post, slide, poster or card may carry 12 words or fewer, so only a raster image or canvas counts). With several surfaces each surface is checked (`thinSurfaces`); the report is `thin` when all are, or when the selector matched no measurable surface (`noSurfaces`).
 
 **Calibration** (medium; the skill's own measurement on 2026-10-08, 128 pages, sample chosen deliberately): 68 human-designed pages, among them 40 top references and 13 award-winning websites of 2025 and 2026: none from index 3, two miss the gate. 38 AI pages (Lovable, v0, Bolt): 25 from index 3, 31 miss the gate. Strongest signals: tell C10 (humans 0, AI 25), C2 (0 to 13), C3 (0 to 11), D3 (1 to 10), cluster Template stack (0 to 21). Tells E1 and E2 are copy findings, not an AI signal. Slide, social, document and `ui` checked only with test files.
 
